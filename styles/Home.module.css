@@ -7,6 +7,123 @@
   min-height: 100vh;
 }
 
+.walletAddress {
+  font-family: var(--font-mono);
+  color: white;
+  margin: 20px;
+text-align: right;
+}
+
+.topPanel {
+  display: flex;
+  justify-content: space-between;
+  background-color: black;
+  padding-left: 5px
+}
+
+.allPosts {
+  font-family: var(--font-mono);
+  color: black;
+  padding-left: 25px;
+  padding-top: 20px;
+
+}
+
+.createPostText {
+  font-family: var(--font-mono);
+  color: black;
+  margin: 20px;
+}
+
+.createPostContainer {
+  font-family: var(--font-mono);
+  color: black;
+  margin: 20px;
+  border-color: black;
+  border-style: groove;
+}
+
+
+.paragraphText {
+  font-family: var(--font-mono);
+  margin: 5px;
+  color: black;
+}
+
+.commentHeading {
+  font-family: var(--font-mono);
+  margin-top: 25px;
+  margin-left: 40px;
+  color: black;
+  font-style:italic
+}
+
+.activePostText {
+  font-family: var(--font-mono);
+  margin: 5px;
+  margin-left: 50px;
+  color: black;
+}
+
+.detailsText {
+  font-family: var(--font-mono);
+  margin: 5px;
+  margin-left: 50px;
+  color: black;
+  font-size: 0.9em
+}
+
+.createPostBtn {
+  margin-top: 10px;
+  padding: 10px;
+  color: white;
+  background-color: blue;
+}
+
+.backBtn {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: black;
+  color: white;
+}
+
+.upvoteBtn {
+  cursor: pointer;
+}
+
+.upvoteBtn:hover {
+  box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+  transform: translateY(-0.15em);
+}
+
+.postCommentBtn {
+  padding: 10px;
+  margin-top: 10px;
+  margin-right: 5px;
+  background-color: orange;
+  color: white;
+}
+
+.viewPostBtn {
+  margin: 10px;
+  padding: 10px;
+  background-color: green;
+  color: white;
+}
+
+.activePostContainer {
+  font-family: var(--font-mono);
+  color: black;
+  margin: 20px;
+}
+
+.hyperlinkText {
+  font-family: var(--font-mono);
+  margin: 5px;
+  color: blue;
+  text-decoration: underline;
+}
+
 .description {
   display: inherit;
   justify-content: inherit;
