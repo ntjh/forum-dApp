@@ -37,11 +37,12 @@ type PostDetail = {
 };
 
 export default function Home() {
-  const postManagerContract = "0x06a4b238E5Cf4d303dff7e516c9021546AAFF378"; //postManager smart contract address
+  const postManagerContract =
+    "replace with your post manager smart contract address"; //postManager smart contract address
 
   //variables
   const [token, setToken] = useState<string>(
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGU5N0RDODlFQ0E3NEUxZEVCNDhDYmY4ZjVCODAwRWRCODM1MjlBOEQiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NzI3MTY3MzQ1MDcsIm5hbWUiOiJteVRva2VuIn0.9ycmydenwBvA1a24WGLn4E3kH2C5UYgChY9B4-_ZxJU"
+    "replace and add your web3 api key here."
   );
 
   const [postTitle, setPostTitle] = useState<string>("");
@@ -59,9 +60,6 @@ export default function Home() {
   const [latestCid, setLatestCid] = useState<string>("");
 
   const [commentText, setCommentText] = useState<string>("");
-
-  // console.log(noOfPosts);
-  //console.log(latestCid);
 
   function openModal() {
     setIsLoading(true);
@@ -108,19 +106,9 @@ export default function Home() {
       );
 
       setLatestCid(allPosts.postCID);
+
       // declare new array
       let new_posts = [];
-
-      // loop through array and add it into a new array
-      // await Promise.all([
-      //   allPosts.map(async(post: any) => {
-      //     let posterWalletAddress: string = post.posterAddress
-      //     let noOfLikes: number = post.numberOfLikes.toNumber();
-      //     let noOfComments: number = post.numberOfComments.toNumber();
-
-      //     let postSCAddress = allPostsAddresses[i];
-      //   })
-      // ])
 
       for (let i = 0; i < allPosts.posterAddress.length; i++) {
         let posterWalletAddress: string = allPosts.posterAddress[i];
@@ -133,6 +121,7 @@ export default function Home() {
         const postid = await postManagerContractInstance.postIDs(postSCAddress);
 
         if (allPosts.postCID !== 0) {
+          //get file data using axios from url
           let config: any = {
             method: "get",
             url: `https://${allPosts.postCID}.ipfs.w3s.link/post.json`,
@@ -150,6 +139,7 @@ export default function Home() {
             (data) => data.post_ID === postid.toNumber()
           )[0].post_content;
 
+          //Data of each Post
           let newPost: PostDetail = {
             postTitle: getCurrentPostTitle,
             postContent: getCurrentPostContent,
@@ -181,9 +171,9 @@ export default function Home() {
       setLoadedData("Creating post ...Please wait");
       openModal();
 
-      //call web3.storage API function to store data on IPFS as JSON
       const storage = new Web3Storage({ token });
 
+      //no post added, no need to get existing file from ipfs
       if (noOfPosts === 0) {
         const postObj: Post[] = [
           {
@@ -196,13 +186,13 @@ export default function Home() {
         ];
         const buffer = Buffer.from(JSON.stringify(postObj));
 
+        //call web3.storage API function to store data on IPFS as JSON
         const files = [new File([buffer], "post.json")];
         const cid = await storage.put(files);
         setLatestCid(cid);
 
         closeModal();
 
-        //call smart contract function
         const { ethereum } = window;
 
         if (ethereum) {
@@ -213,7 +203,7 @@ export default function Home() {
           const provider = new ethers.providers.Web3Provider(ethereum);
           const signer = provider.getSigner();
 
-          //create contract instance
+          //create post manager contract instance
           const postManagerContractInstance = new ethers.Contract(
             postManagerContract,
             postManagerABI,
@@ -222,7 +212,7 @@ export default function Home() {
 
           //call postManager create post function from the contract
           let { hash } = await postManagerContractInstance.createPost(cid, {
-            gasLimit: 1200000, //test if it needed
+            gasLimit: 1200000,
           });
 
           //wait for transaction to be mined
@@ -232,7 +222,7 @@ export default function Home() {
           alert(`Transaction sent! Hash: ${hash}`);
         }
 
-        //call allGroupbuys to refresh the current list
+        //call getAllPosts function to refresh the current list of post
         await getAllPosts();
 
         //reset fields back to default values
@@ -242,6 +232,8 @@ export default function Home() {
         //close modal
         closeModal();
       } else {
+        //get file data from ipfs using web3 storage API
+
         let config: any = {
           method: "get",
           url: `https://${latestCid}.ipfs.w3s.link/post.json`,
@@ -280,16 +272,16 @@ export default function Home() {
           const provider = new ethers.providers.Web3Provider(ethereum);
           const signer = provider.getSigner();
 
-          //create contract instance
+          //create post manager contract instance
           const postManagerContractInstance = new ethers.Contract(
             postManagerContract,
             postManagerABI,
             signer
           );
 
-          //call postManager create post function from the contract
+          //call create post function from the postManager contract
           let { hash } = await postManagerContractInstance.createPost(cid, {
-            gasLimit: 1200000, //test if it needed
+            gasLimit: 1200000,
           });
 
           //wait for transaction to be mined
@@ -341,7 +333,7 @@ export default function Home() {
         (data) => data.post_ID !== postData.postId
       );
 
-      //filter out to get current post data
+      //filter out to get current post data to add comment object in
       let getCurrentPostData: Post = postDataObject.filter(
         (data) => data.post_ID === postData.postId
       )[0];
@@ -350,15 +342,12 @@ export default function Home() {
         comment_address: currentWalletAddress,
         comment_content: commentText,
       };
+
       //add new comment into comment array
       getCurrentPostData.comments.push(userComment);
 
       //add back current post data back into rest of the post data
       otherPostData.push(getCurrentPostData);
-
-      // let sortedData = otherPostData.sort(function (a, b) {
-      //   return b.post_ID - a.post_ID;
-      // });
 
       //store new JSON object in IPFS
       const buffer = Buffer.from(JSON.stringify(otherPostData));
@@ -392,7 +381,7 @@ export default function Home() {
           newCid,
           postData.postSCAddress,
           {
-            gasLimit: 1200000, //test if it needed
+            gasLimit: 1200000,
           }
         );
 
@@ -408,7 +397,7 @@ export default function Home() {
         //reset fields back to default values
         setCommentText("");
 
-        //call setActivePost to get updated comment
+        //call setActivePost to get updated comments
         await setActivePost(postData, newCid);
 
         //close modal
@@ -454,9 +443,7 @@ export default function Home() {
 
         const postInfo =
           await postContractInstance.getDetailedPostInformation();
-        //const noOfLikes = postInfo._likeList.length;
-        console.log(postInfo._commentIDs);
-        console.log(postInfo._commentTimeStamps);
+
         const listOfUserWhoLikedThePost: string[] = postInfo._likeList;
 
         const hasCurrentUserLiked = listOfUserWhoLikedThePost.some(
@@ -506,6 +493,7 @@ export default function Home() {
           signer
         );
 
+        //call likePost function from the post smart contract
         let { hash } = await postContractInstance.likePost();
 
         //wait for transaction to be mined
