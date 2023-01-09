@@ -13,7 +13,7 @@ import postManagerABI from "../utils/postManagerABI.json";
 
 type Comment = {
   comment_address: string;
-  comment_content: string; //add iD? & timestamp
+  comment_content: string;
 };
 
 type Post = {
