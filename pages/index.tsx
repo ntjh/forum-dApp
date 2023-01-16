@@ -484,7 +484,9 @@ export default function Home() {
           signer
         );
         // (12) call likePost function from the post smart contract
-        let { hash } = await postContractInstance.likePost();
+        let { hash } = await postContractInstance.likePost({
+          gasLimit: 1200000,
+        });
         // (13) wait for transaction to be mined
         await provider.waitForTransaction(hash);
         // (14) display alert message
